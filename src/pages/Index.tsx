@@ -1,12 +1,50 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { ProductCard } from "@/components/ProductCard";
+import { ProductDetailsModal } from "@/components/ProductDetailsModal";
+import { products, Product } from "@/data/products";
+import { toast } from "@/hooks/use-toast";
 
-const Index = () => {
+interface IndexProps {
+  onAddToCart: (product: Product) => void;
+}
+
+const Index = ({ onAddToCart }: IndexProps) => {
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  const handleAddToCart = (product: Product) => {
+    onAddToCart(product);
+    toast({
+      title: "Added to cart",
+      description: `${product.name} has been added to your cart.`,
+    });
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">Secure Marketplace</h1>
+        <p className="text-muted-foreground">
+          Shop with confidence. Every transaction protected by AI-powered fraud detection.
+        </p>
       </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {products.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            onViewDetails={setSelectedProduct}
+            onAddToCart={handleAddToCart}
+          />
+        ))}
+      </div>
+
+      <ProductDetailsModal
+        product={selectedProduct}
+        open={!!selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+        onAddToCart={handleAddToCart}
+      />
     </div>
   );
 };
